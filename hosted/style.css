@@ -270,6 +270,15 @@ h3.domoHeight {
     font-size: 1.5em;
 }
 
+h3.domoQuote {
+    float:right;
+    text-align: left;
+    width: 500px;
+    font-weight: bold;
+    padding-right: 40px;
+    font-size: 1.5em;
+}
+
 .domo:first-child {
     margin-top: 10px;
 }
