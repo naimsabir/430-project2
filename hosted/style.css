@@ -286,3 +286,9 @@ h3.domoQuote {
 .domo:last-child {
     margin-bottom:10px;
 }
+
+#chatBox 
+{
+    position: absolute;
+    bottom: 0;
+}

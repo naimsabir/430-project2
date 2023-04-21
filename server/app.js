@@ -11,7 +11,10 @@ const session = require('express-session');
 const RedisStore = require('connect-redis').default;
 const redis = require('redis');
 
+
 const router = require('./router.js');
+
+const socketSetup = require('./io.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
@@ -39,7 +42,7 @@ redisClient.connect().then(() => {
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json());
 
-  app.use(session({
+  const sessionMiddleware = session({
     key: 'sessionid',
     store: new RedisStore({
       client: redisClient,
@@ -47,7 +50,9 @@ redisClient.connect().then(() => {
     secret: 'Domo Arigato',
     resave: false,
     saveUninitialized: false,
-  }));
+  });
+  
+  app.use(sessionMiddleware);
 
   app.engine('handlebars', expressHandlebars.engine({ defaultLayout: '' }));
   app.set('view engine', 'handlebars');
@@ -55,7 +60,9 @@ redisClient.connect().then(() => {
 
   router(app);
 
-  app.listen(port, (err) => {
+  const server = socketSetup(app, sessionMiddleware);
+
+  server.listen(port, (err) => {
     if (err) { throw err; }
     console.log(`Listening on port: ${port}`);
   });

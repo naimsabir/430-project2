@@ -5,6 +5,7 @@ module.exports = {
         app: './client/maker.jsx',
         login: './client/login.jsx',
         quotes: './client/quotes.jsx',
+        chat: './client/chat.jsx',
     },
     module: {
         rules: [
@@ -18,6 +19,7 @@ module.exports = {
         ],
     },
     mode: 'production',
+    devtool: 'source-map',
     watchOptions: {
         aggregateTimeout: 200,
     },

@@ -16,6 +16,8 @@ const router = (app) => {
 
   app.get('/quotePage', mid.requiresLogin, controllers.Quotes.quotePage);
 
+  app.get('/chatPage', mid.requiresLogin, controllers.Chat.chatPage);
+
   app.get('/', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
 };
 
