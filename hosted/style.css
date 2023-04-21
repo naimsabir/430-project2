@@ -292,3 +292,9 @@ h3.domoQuote {
     position: absolute;
     bottom: 0;
 }
+
+#chatField.formSubmit
+{
+    position: absolute;
+    bottom: 0;
+}

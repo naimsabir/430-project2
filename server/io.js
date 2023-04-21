@@ -3,15 +3,15 @@ const { Server } = require('socket.io');
 
 let io;
 
-//put wrap
-const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
+// put wrap
+const wrap = (middleware) => (socket, next) => middleware(socket.request, {}, next);
 
 // I don't think I'll have a use for channels
 const handleChatMessage = (msg, socket) => {
- 
   io.emit('chat message', {
     username: socket.request.session.account.username,
-    message: msg.message});
+    message: msg.message,
+  });
 };
 
 const socketSetup = (app, sessionMiddleware) => {
@@ -27,7 +27,7 @@ const socketSetup = (app, sessionMiddleware) => {
       console.log('a user disconnected');
     });
 
-    socket.on('chat message', msg => handleChatMessage(msg, socket));
+    socket.on('chat message', (msg) => handleChatMessage(msg, socket));
   });
 
   return server;

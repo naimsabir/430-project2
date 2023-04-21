@@ -11,7 +11,6 @@ const session = require('express-session');
 const RedisStore = require('connect-redis').default;
 const redis = require('redis');
 
-
 const router = require('./router.js');
 
 const socketSetup = require('./io.js');
@@ -51,7 +50,7 @@ redisClient.connect().then(() => {
     resave: false,
     saveUninitialized: false,
   });
-  
+
   app.use(sessionMiddleware);
 
   app.engine('handlebars', expressHandlebars.engine({ defaultLayout: '' }));
