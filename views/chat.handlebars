@@ -10,13 +10,16 @@
 </head>
 </head>
 <body>
+    <div id="roomSelect">
+        
+    </div>
     <div id="chatDisplay">
 
     </div>
 
     <form id="chatField">
         {{!-- <input id="chatBox" type="text" /> --}}
-        <textarea class="textarea is-large is-info" type="text" placeholder="My character would win because..." rows="5" cols="60" id="chatBox"></textarea> <!--use .value for this-->    
+        <textarea class="textarea is-large is-info" type="text" placeholder="My character would win because..." rows="5" cols="50" id="chatBox"></textarea> <!--use .value for this-->    
         <input type="submit" />
     </form>
     <script src="/socket.io/socket.io.js"></script>

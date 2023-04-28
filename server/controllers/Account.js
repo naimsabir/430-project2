@@ -56,6 +56,14 @@ const signup = async (req, res) => {
   }
 };
 
+//Use Authenticate and code from signup to allow users to change their password. Or at it's most basic
+//I can Authenticate the username and then call signup with the new information. The problem is that it wouldn't have access
+//to the same info anymore (I think???)
+const changePassword = async (req, res) =>
+{
+
+}
+
 module.exports = {
   loginPage,
   login,
