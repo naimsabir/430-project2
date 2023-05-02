@@ -24,6 +24,7 @@ const login = (req, res) => {
     // ask about
     req.session.account = Account.toAPI(account);
 
+    //change this to whatever loads the chat page : /chatPage
     return res.json({ redirect: '/maker' });
   });
 };

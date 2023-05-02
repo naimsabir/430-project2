@@ -10,18 +10,33 @@
 </head>
 </head>
 <body>
+    <nav><a href="/login"><img id="logo" src="/assets/img/face.png" alt="face logo"/></a>
+        <div class="navlink"><a href="/logout">Log out</a></div>
+        <div class="navlink"><a href="/quotePage">Domo Quotes</a></div>
+        <div class="navlink"><a href="/chatPage">Chat Page</a></div>
+    </nav>
+    
     <div id="roomSelect">
         
     </div>
+
+    <div id="deckDisplay">
+        <div id="deck1">
+
+        </div>
+        <div id="deck2">
+
+        </div>
+    </div>
+
     <div id="chatDisplay">
 
     </div>
 
-    <form id="chatField">
-        {{!-- <input id="chatBox" type="text" /> --}}
-        <textarea class="textarea is-large is-info" type="text" placeholder="My character would win because..." rows="5" cols="50" id="chatBox"></textarea> <!--use .value for this-->    
-        <input type="submit" />
-    </form>
+    <div id="textField">
+
+    </div>
+
     <script src="/socket.io/socket.io.js"></script>
     <script src="/assets/chatbundle.js"></script>
 </body>

@@ -295,8 +295,60 @@ h3.domoQuote {
     bottom: 0;
 }
 
-#chatField.formSubmit
+#chatFieldSubmitButton
 {
     position: absolute;
     bottom: 0;
+}
+
+#chatDisplay
+{
+    display: flex;
+    flex-direction: column;
+    overflow: scroll;
+    height: 225px;
+}
+
+#roomSelect
+{
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+}
+
+#deckDisplay
+{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: "Deck1 Deck2"
+}
+#deck1
+{
+    display: flex;
+    grid-area: Deck1;
+    justify-content: center;
+}
+#deck2
+{
+    display: flex;
+    grid-area: Deck2;
+    justify-content: center;
+}
+.card
+{
+    width: auto;
+    height: auto;
+    position: relative;
+}
+
+@media screen and (min-width: 760px)
+{
+  .card
+  {
+      width: 400px;
+      height: 150px;
+      position: relative;
+      justify-content: center;
+      overflow: auto;
+  }
 }
