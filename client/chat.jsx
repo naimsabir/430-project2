@@ -19,9 +19,6 @@ let votes;
 
 //The big issue with this is that it doesn't stay consistent amongst all users
 let isFull = false;
-//I KEEP DOING THIS CLIENT SIDE VARIABLES DO NOT UPDATE 
-let playerOne = false;
-let playerTwo = false;
 //get rid of this later
 let roomNum;
 //Things to ask Austin About:
@@ -71,7 +68,7 @@ const ChatBox = (props) =>
 const addAllCards = (e) =>
 {
     e.preventDefault();
-    e.target.querySelector("#buyButton").hidden;
+    e.target.style.visibility = "hidden"; // visible when we want it back
     charCap = characters.length;
     powerCap = powers.length;
     weakCap = weaknesses.length;
@@ -80,12 +77,12 @@ const addAllCards = (e) =>
 const BuyButton = (props) => 
 {
     return (
-        <button id="buyButton" type="submit" value="Submit" onSubmit={addAllCards}>Buy New Card Packs</button>
+        <button id="buyButton" value="Submit" onClick={addAllCards}>Buy New Card Packs</button>
     );
 }
 
-const addVote = () => {
-    socket.emit('add vote');
+const addVote = (cardId) => {
+    socket.emit('add vote', cardId );
 }
 const DeckDisplay = (props) =>
 {
@@ -107,8 +104,7 @@ const DeckDisplay = (props) =>
                     class="button is-danger is-small mt-1"
                     title="Vote for this card!"
                     //style="background-color: #BC96E6" causes an error
-                    type="submit"
-                    onSubmit={addVote}
+                    onClick={() => addVote(props.cardId)}
                 >
                     Vote!
                 </button>
@@ -273,9 +269,19 @@ const loadDeckFromServer = async () =>
     }
 }
 
+const EndScreen  = (props) =>
+{
+    return(
+        <div id="endText">
+            <h1>{props.username} Won!</h1>
+            <h3>This Room will close after 30 seconds</h3>
+        </div>
+    )
+}
+
 const init = () => {
     const messages = document.querySelector("#chatDisplay");
-    const roomSelect = document.querySelector("#roomSelect");
+    let roomSelect = document.querySelector("#roomSelect");
     const profitSpot = document.querySelector("#profitSpot");
 
     //loadDeckFromServer();
@@ -291,35 +297,58 @@ const init = () => {
         ReactDOM.render(<DisplayMessage username={msg.username} msg={msg.message} />, newMessage);
     })
     socket.on('deck select', (obj) => {
-        console.log(obj);
-        if(obj.queuePos == 2)
-        {
-            playerTwo = true;
-            ReactDOM.render(
-                <DeckDisplay username={obj.username} character={obj.character} power={obj.power} weakness={obj.weakness} />,
-                document.querySelector("#deck2")
-            )
-        }
-        else if(obj.queuePos == 1)
-        {
-            playerOne = true;
-            ReactDOM.render(
-                <DeckDisplay username={obj.username} character={obj.character} power={obj.power} weakness={obj.weakness} />,
-                document.querySelector("#deck1")
-            )
-        }
+        //console.log(obj);
+        //if(obj.queuePos == 2)
+        //{
+        //    ReactDOM.render(
+        //        <DeckDisplay cardId="card2" username={obj.username} character={obj.character} power={obj.power} weakness={obj.weakness} />,
+        //        document.querySelector("#deck2")
+        //    )
+        //}
+        //else if(obj.queuePos == 1)
+        //{
+        //    ReactDOM.render(
+        //        <DeckDisplay cardId="card1" username={obj.username} character={obj.character} power={obj.power} weakness={obj.weakness} />,
+        //        document.querySelector("#deck1")
+        //    )
+        //}
         //ReactDOM.render(
         //    <DeckDisplay username={obj.username} character={obj.character} power={obj.power} weakness={obj.weakness} />,
         //    document.querySelector("#deck1")
         //)
     })
 
-    socket.on('pull data', (obj) => {
-        numInRoom = obj.queuePos;
-        //if(obj.queuePos == 2)
-        //{
+    socket.on('begin voting', (obj) => {
+        ReactDOM.render(
+            <DeckDisplay cardId="card1" username={obj.card1.username} character={obj.card1.character} power={obj.card1.power} weakness={obj.card1.weakness} />,
+                document.querySelector("#deck1")
+        )
+        ReactDOM.render(
+            <DeckDisplay cardId="card2" username={obj.card2.username} character={obj.card2.character} power={obj.card2.power} weakness={obj.card2.weakness} />,
+            document.querySelector("#deck2")
+        )
+        document.querySelector("#roomSelect").innerHTML = "";
+        document.querySelector("#profitSpot").innerHTML = "";
+    })
 
-        //}
+    socket.on('all votes', (obj) => {
+        document.querySelector("#chatDisplay").innerHTML = "";
+        document.querySelector("#textField").innerHTML = "";
+        document.querySelector("#deckDisplay").innerHTML = "";
+        ReactDOM.render(
+            <EndScreen username={obj.username} cardId={obj.cardId}/>,
+            document.querySelector("#endScreen")
+        )
+    })
+
+    socket.on('server-command', (obj) => {
+        if(obj == "leave-room")
+        {
+            roomSelect.remove();
+            roomSelect = document.createElement('div');
+            document.querySelector("#endScreen").appendChild(roomSelect)
+            ReactDOM.render(<LoginChatRoomWindow />, roomSelect);
+        }
     })
 
     socket.on('add vote', (obj) => {

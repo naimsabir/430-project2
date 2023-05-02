@@ -32,7 +32,7 @@ const handleError = (message) => {
   };
 
   const hideError = () => {
-    document.querySelector("#domoMessage").classList.add('hidden');
+    //document.querySelector("#domoMessage").classList.add('hidden');
   };
 
   module.exports = {
