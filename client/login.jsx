@@ -85,6 +85,7 @@ const init = () =>
 {
     const loginButton = document.querySelector("#loginButton");
     const signupButton = document.querySelector("#signupButton");
+    const resetPasswordButton = document.querySelector("#resetButton");
 
     loginButton.addEventListener('click', (e) => {
         e.preventDefault();

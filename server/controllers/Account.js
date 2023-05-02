@@ -24,8 +24,8 @@ const login = (req, res) => {
     // ask about
     req.session.account = Account.toAPI(account);
 
-    //change this to whatever loads the chat page : /chatPage
-    return res.json({ redirect: '/maker' });
+    // change this to whatever loads the chat page : /chatPage
+    return res.json({ redirect: '/chatPage' });
   });
 };
 
@@ -57,13 +57,14 @@ const signup = async (req, res) => {
   }
 };
 
-//Use Authenticate and code from signup to allow users to change their password. Or at it's most basic
-//I can Authenticate the username and then call signup with the new information. The problem is that it wouldn't have access
-//to the same info anymore (I think???)
-const changePassword = async (req, res) =>
-{
+const changePassword = async (req, res) => {
+  const pass = `${req.body.pass}`;
+  const pass2 = `${req.body.pass2}`;
 
-}
+  if (pass !== pass2) {
+    return res.status(400).json({ error: 'Passwords do not match!' });
+  }
+};
 
 module.exports = {
   loginPage,

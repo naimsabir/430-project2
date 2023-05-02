@@ -1,35 +1,33 @@
 const mongoose = require('mongoose');
 
-const DeckSchema = new mongoose.Schema
-({
-    character:
+const DeckSchema = new mongoose.Schema({
+  character:
     {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
-    power:
+  power:
     {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
-    weakness:
+  weakness:
     {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
-    owner:
+  owner:
     {
-        type: mongoose.Schema.ObjectId,
-        required: true,
-        ref: 'Account',
+      type: mongoose.Schema.ObjectId,
+      required: true,
+      ref: 'Account',
     },
 });
 
-DeckSchema.statics.toAPI = (doc) => 
-({
-    character: doc.character,
-    power: doc.power,
-    weakness: doc.weakness,
+DeckSchema.statics.toAPI = (doc) => ({
+  character: doc.character,
+  power: doc.power,
+  weakness: doc.weakness,
 });
 
 const DeckModel = mongoose.model('Deck', DeckSchema);

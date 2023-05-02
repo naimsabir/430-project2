@@ -48,7 +48,26 @@
         "Avatar Aang",
         "Avatar Korra",
         "Duke Nukem",
-        "Doom Slayer"
+        "Doom Slayer",
+        "Godzilla",
+        "Shaq",
+        "Abraham Lincoln",
+        "Optimus Prime",
+        "Jackie Chan",
+        "Robocop",
+        "Terminator",
+        "Captain Kirk",
+        "Darth Vader",
+        "Calendar Man",
+        "Condiment King",
+        "Obi-Wan",
+        "Naruto",
+        "Sasuke",
+        "Goku",
+        "Vegeta",
+        "Larry the Cucumber",
+        "Bob the Tomato",
+        "Megatron"
     ],
     "powers": [
         "Super Strength",
@@ -90,7 +109,13 @@
         "A gravity gun",
         "A headcrab",
         "Nunchuks",
-        "A belieber"
+        "An army of beliebers",
+        "Shadow Clone Jutsu",
+        "Chidori",
+        "A BFG",
+        "Necromancy",
+        "An army of mudcrabs",
+        ""
     ],
     "weaknesses": [
         "Made of sand",

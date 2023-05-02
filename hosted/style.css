@@ -305,8 +305,15 @@ h3.domoQuote {
 {
     display: flex;
     flex-direction: column;
-    overflow: scroll;
+    overflow: auto;
     height: 225px;
+}
+
+#headSection
+{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: "roomSelect profitSpot"
 }
 
 #roomSelect
@@ -314,6 +321,15 @@ h3.domoQuote {
     display: flex;
     justify-content: center;
     flex-direction: row;
+    grid-area: roomSelect;
+}
+
+#profitSpot
+{
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    grid-area: profitSpot;
 }
 
 #deckDisplay
@@ -346,7 +362,7 @@ h3.domoQuote {
   .card
   {
       width: 400px;
-      height: 150px;
+      height: 175px;
       position: relative;
       justify-content: center;
       overflow: auto;

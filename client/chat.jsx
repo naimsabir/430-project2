@@ -8,10 +8,20 @@ let characters;
 let powers;
 let weaknesses;
 
-let numInRoom;
+//use these for the random num array but if the buy more card packs button is pressed it will raise them to the cap
+let charCap = 35;
+let powerCap = 30;
+let weakCap = 15;
+
+let numInRoom = 0;
+
+let votes;
 
 //The big issue with this is that it doesn't stay consistent amongst all users
 let isFull = false;
+//I KEEP DOING THIS CLIENT SIDE VARIABLES DO NOT UPDATE 
+let playerOne = false;
+let playerTwo = false;
 //get rid of this later
 let roomNum;
 //Things to ask Austin About:
@@ -48,13 +58,34 @@ const chatBoxListener = (e) => {
     }
     // });
 }
-const ChatBox = (props) => {
+const ChatBox = (props) => 
+{
     return (
         <form id="chatField" onSubmit={chatBoxListener}>
             <textarea class="textarea is-large is-info" type="text" placeholder="My character would win because..." rows="5" cols="50" id="chatBox"></textarea>
             <input type="submit" id="chatFieldSubmitButton" />
         </form>
     );
+}
+
+const addAllCards = (e) =>
+{
+    e.preventDefault();
+    e.target.querySelector("#buyButton").hidden;
+    charCap = characters.length;
+    powerCap = powers.length;
+    weakCap = weaknesses.length;
+}
+
+const BuyButton = (props) => 
+{
+    return (
+        <button id="buyButton" type="submit" value="Submit" onSubmit={addAllCards}>Buy New Card Packs</button>
+    );
+}
+
+const addVote = () => {
+    socket.emit('add vote');
 }
 const DeckDisplay = (props) =>
 {
@@ -70,6 +101,18 @@ const DeckDisplay = (props) =>
         //ok I do wanna make three separate cards but react doesn't like that and gives me the
         //"jsx expressions must have one parent element" error
         <div class="card" id="character-card">
+            <div class="control has-text-centered">
+                <button
+                    id="btn-vote"
+                    class="button is-danger is-small mt-1"
+                    title="Vote for this card!"
+                    //style="background-color: #BC96E6" causes an error
+                    type="submit"
+                    onSubmit={addVote}
+                >
+                    Vote!
+                </button>
+            </div>
             <div class="card-content">
                 <div class="media">
                   <div class="media-content">
@@ -101,9 +144,9 @@ const handleRoom = (e) => {
     messages.innerHTML = "";
 
 
-    const characterRand = characters[Math.floor(Math.random() * 47)];
-    const powerRand = powers[Math.floor(Math.random() * 37)];
-    const weaknessRand = weaknesses[Math.floor(Math.random() * 20)];
+    const characterRand = characters[Math.floor(Math.random() * charCap)]; //47
+    const powerRand = powers[Math.floor(Math.random() * powerCap)]; //37
+    const weaknessRand = weaknesses[Math.floor(Math.random() * weakCap)]; //20
 
     if(numInRoom <= 2)
     {
@@ -118,6 +161,18 @@ const handleRoom = (e) => {
     socket.emit('room select', { join: roomNum });
 
     socket.emit('deck select', {character: characterRand, power: powerRand, weakness: weaknessRand});
+
+    //one of many failed attempts to keep the cards on screen
+    //if(!playerOne)
+    //{
+    //    socket.emit('pull data 1', {character: characterRand, power: powerRand, weakness: weaknessRand});
+    //    playerOne = true;
+    //}
+    //else if(!playerTwo)
+    //{
+    //    socket.emit('pull data 2', {character: characterRand, power: powerRand, weakness: weaknessRand});
+    //    playerTwo = true;
+    //}
 }
 
 const LoginChatRoomWindow = (props) => {
@@ -189,7 +244,7 @@ const dataLoaded = (json) => {
 
 const loadDeckFromServer = async () =>
 {
-    socket.emit('pull data', {num: 1});
+    //socket.emit('pull data', {num: 1});
     if(numInRoom <= 2)
     {
         const response = await fetch('/getDeck');
@@ -221,10 +276,12 @@ const loadDeckFromServer = async () =>
 const init = () => {
     const messages = document.querySelector("#chatDisplay");
     const roomSelect = document.querySelector("#roomSelect");
+    const profitSpot = document.querySelector("#profitSpot");
 
-    loadDeckFromServer();
+    //loadDeckFromServer();
     //chatBoxListener();
     ReactDOM.render(<LoginChatRoomWindow />, roomSelect);
+    ReactDOM.render(<BuyButton/>, profitSpot);
     //currently just using to see a way I can access this
     getTextData("../assets/card-data/cardtext.json");
     socket.on('chat message', (msg) => {
@@ -235,15 +292,17 @@ const init = () => {
     })
     socket.on('deck select', (obj) => {
         console.log(obj);
-        if(obj.queuePos % 2 == 0 && !isFull)
+        if(obj.queuePos == 2)
         {
+            playerTwo = true;
             ReactDOM.render(
                 <DeckDisplay username={obj.username} character={obj.character} power={obj.power} weakness={obj.weakness} />,
                 document.querySelector("#deck2")
             )
         }
-        else if(obj.queuePos % 2 != 0 && !isFull)
+        else if(obj.queuePos == 1)
         {
+            playerOne = true;
             ReactDOM.render(
                 <DeckDisplay username={obj.username} character={obj.character} power={obj.power} weakness={obj.weakness} />,
                 document.querySelector("#deck1")
@@ -256,14 +315,15 @@ const init = () => {
     })
 
     socket.on('pull data', (obj) => {
-        if(obj.queuePos)
-        {
-            numInRoom = obj.queuePos;
-            if(numInRoom >= 3)
-            {
-                isFull = true;
-            }
-        }
+        numInRoom = obj.queuePos;
+        //if(obj.queuePos == 2)
+        //{
+
+        //}
+    })
+
+    socket.on('add vote', (obj) => {
+        votes = obj.votes;
     })
 
 }
