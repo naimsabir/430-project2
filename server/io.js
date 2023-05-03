@@ -6,7 +6,6 @@ let io;
 // let p1pow;
 // let p1weak;
 
-
 const roomData = {};
 
 // put wrap
@@ -26,14 +25,12 @@ const handleRoomChange = async (obj, socket) => {
       socket.leave([...socket.rooms][1]);
     }
     socket.join(obj.join);
-    if(!roomData[[...socket.rooms][1]])
-    {
-      roomData[[...socket.rooms][1]] = {}
+    if (!roomData[[...socket.rooms][1]]) {
+      roomData[[...socket.rooms][1]] = {};
     }
     console.log(socket.rooms);
-    if(roomData[[...socket.rooms][1]].card1 && roomData[[...socket.rooms][1]].card2)
-    {
-      socket.emit('begin voting', roomData[[...socket.rooms][1]])
+    if (roomData[[...socket.rooms][1]].card1 && roomData[[...socket.rooms][1]].card2) {
+      socket.emit('begin voting', roomData[[...socket.rooms][1]]);
     }
     // ask austin later because this doesn't get the amount of current users in the room
     // but also for the purpose of tracking which user joined at which time to queue them
@@ -55,86 +52,55 @@ const handleDeck = async (obj, socket) => {
       power: obj.power,
       weakness: obj.weakness,
       queuePos: sockets.length,
-    }
+    };
     io.to([...socket.rooms][1]).emit('deck select', card);
     card.votes = 0;
-    if(sockets.length === 1)
-    {
+    if (sockets.length === 1) {
       roomData[[...socket.rooms][1]].card1 = card;
-    }
-    else if(sockets.length === 2)
-    {
+    } else if (sockets.length === 2) {
       roomData[[...socket.rooms][1]].card2 = card;
     }
 
-    if(roomData[[...socket.rooms][1]].card1 && roomData[[...socket.rooms][1]].card2)
-    {
-      io.to([...socket.rooms][1]).emit('begin voting', roomData[[...socket.rooms][1]])
+    if (roomData[[...socket.rooms][1]].card1 && roomData[[...socket.rooms][1]].card2) {
+      io.to([...socket.rooms][1]).emit('begin voting', roomData[[...socket.rooms][1]]);
     }
   }
 };
-
-const handleData = async (obj, socket) => {
-  // p1char = obj.character;
-  // p1pow = obj.power;
-  // p1weak = obj.weakness;
-  const sockets = await io.in([...socket.rooms][1]).fetchSockets();
-  io.to([...socket.rooms][1]).emit(
-    'pull data 1',
-    {
-      queuePos: sockets.length,
-    },
-  );
-};
-
-// const handleData2 = async (obj, socket) => {
-//  io.to([...socket.rooms][1]).emit(
-//    'pull data 2',
-//    {
-//
-//    },
-//  );
-// };
 
 const handleVote = async (obj, socket) => {
   const sockets = await io.in([...socket.rooms][1]).fetchSockets();
-  if(obj == "card1")
-  {
+  if (obj === 'card1') {
     roomData[[...socket.rooms][1]].card1.votes++;
-  }
-  else if(obj == "card2")
-  {
+  } else if (obj === 'card2') {
     roomData[[...socket.rooms][1]].card2.votes++;
   }
-  if(sockets.length <= (roomData[[...socket.rooms][1]].card1.votes + roomData[[...socket.rooms][1]].card2.votes))
-  {
-    if(roomData[[...socket.rooms][1]].card1.votes > roomData[[...socket.rooms][1]].card2.votes)
-    {
-      io.to([...socket.rooms][1]).emit("all votes", {cardId: "card1", username: roomData[[...socket.rooms][1]].card1.username});
+  if (sockets.length <= (roomData[[...socket.rooms][1]].card1.votes
+    + roomData[[...socket.rooms][1]].card2.votes)) {
+    if (roomData[[...socket.rooms][1]].card1.votes > roomData[[...socket.rooms][1]].card2.votes) {
+      io.to([...socket.rooms][1]).emit('all votes', { cardId: 'card1', username: roomData[[...socket.rooms][1]].card1.username });
       setTimeout(() => {
-        //delete roomData[[...socket.rooms][1]];
-        roomData[[...socket.rooms][1]].card1 = undefined;
-
-        io.to([...socket.rooms][1]).emit('server-command', 'leave-room')
-         sockets.forEach(socket => {
-          socket.leave([...socket.rooms][1]);
-         });
-      }, 3000)
-    }
-    else if(roomData[[...socket.rooms][1]].card1.votes < roomData[[...socket.rooms][1]].card2.votes)
-    {
-      io.to([...socket.rooms][1]).emit("all votes", {cardId: "card2", username: roomData[[...socket.rooms][1]].card2.username});
+        delete roomData[[...socket.rooms][1]];
+        // roomData[[...socket.rooms][1]].card1 = undefined;
+        // roomData[[...socket.rooms][1]].card2 = undefined;
+        io.to([...socket.rooms][1]).emit('server-command', 'leave-room');
+        sockets.forEach((socketVal) => { // changed to socketVal for eslint
+          socketVal.leave([...socket.rooms][1]);
+        });
+      }, 30000);
+    } else if (roomData[[...socket.rooms][1]].card1.votes
+      < roomData[[...socket.rooms][1]].card2.votes) {
+      io.to([...socket.rooms][1]).emit('all votes', { cardId: 'card2', username: roomData[[...socket.rooms][1]].card2.username });
       setTimeout(() => {
-        //delete roomData[[...socket.rooms][1]];
-        roomData[[...socket.rooms][1]].card2 = undefined;
+        delete roomData[[...socket.rooms][1]];
+        // roomData[[...socket.rooms][1]].card1 = undefined;
+        // roomData[[...socket.rooms][1]].card2 = undefined;
 
-        io.to([...socket.rooms][1]).emit('server-command', 'leave-room')
-         sockets.forEach(socket => {
-          socket.leave([...socket.rooms][1]);
-         });
-      }, 3000)
+        io.to([...socket.rooms][1]).emit('server-command', 'leave-room');
+        sockets.forEach((socketVal) => {
+          socketVal.leave([...socket.rooms][1]);
+        });
+      }, 30000);
     }
-    
   }
 };
 
@@ -164,8 +130,6 @@ const socketSetup = (app, sessionMiddleware) => {
     socket.on('room select', (obj) => handleRoomChange(obj, socket));
 
     socket.on('deck select', (obj) => handleDeck(obj, socket));
-
-    socket.on('pull data', (obj) => handleData(obj, socket));
 
     socket.on('add vote', (obj) => handleVote(obj, socket));
   });

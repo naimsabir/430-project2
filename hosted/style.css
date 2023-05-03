@@ -17,7 +17,7 @@ html, body {
 nav {
     width: 100%;
     height: 50px;
-    background-color: #55acee;
+    background-color: red;
 }
 
 nav:nth-child(1) {
@@ -38,13 +38,13 @@ nav:nth-child(1) {
     text-decoration: none;
     padding: 5px;
     border-radius: 4px;
-    background-color: #55acee;
+    background-color: red;
     transition: background-color 0.4s ease;
 }
 
 .navlink a:hover {
     transition: background-color 0.8s ease;
-    background-color: #66bdff;
+    background-color: lightcoral;
 }
 
 .mainForm {
@@ -75,9 +75,9 @@ nav:nth-child(1) {
     margin-top: 14px;
     font-size: 1.2em;
     width: 100px;
-    background-color: #55acee;
+    background-color: red;
     border-radius: 2px;
-    border-color: #66acee;
+    border-color: darkred;
     padding: 3px 0px;
     color: white;
     text-decoration: none;
@@ -89,7 +89,7 @@ nav:nth-child(1) {
 
 .formSubmit:hover {
     transition: background-color 0.4s ease;
-    background-color: #338acc;
+    background-color: red;
 }
 
 #user, #pass, #pass2 {
@@ -101,7 +101,7 @@ nav:nth-child(1) {
 
 #user:focus, #pass:focus, #pass2:focus {
     outline: none;
-    box-shadow: 0px 0px 1px 1px #55acee;
+    box-shadow: 0px 0px 1px 1px red;
 }
 
 .hidden {
@@ -192,7 +192,18 @@ nav:nth-child(1) {
     height: auto;
     position: relative;
 }
-
+.disabled
+{
+    opacity: 0.6;
+}
+#btn-vote
+{
+    border-radius: 2px;
+}
+#roomSubmit
+{
+    border-radius: 2px;
+}
 @media screen and (min-width: 760px)
 {
   .card

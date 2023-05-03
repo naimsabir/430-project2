@@ -57,14 +57,14 @@ const signup = async (req, res) => {
   }
 };
 
-const changePassword = async (req, res) => {
-  const pass = `${req.body.pass}`;
-  const pass2 = `${req.body.pass2}`;
-
-  if (pass !== pass2) {
-    return res.status(400).json({ error: 'Passwords do not match!' });
-  }
-};
+// const changePassword = async (req, res) => {
+//  const pass = `${req.body.pass}`;
+//  const pass2 = `${req.body.pass2}`;
+//
+//  if (pass !== pass2) {
+//    return res.status(400).json({ error: 'Passwords do not match!' });
+//  }
+// };
 
 module.exports = {
   loginPage,

@@ -133,7 +133,7 @@ const handleRoom = (e) => {
     console.log("handle room called");
 
     roomNum = e.target.querySelector("#chatRoom").value;
-    //e.target.querySelector("#roomSubmit").disabled = true;
+    e.target.querySelector("#roomSubmit").disabled = true;
     //time for voting - commenting out for testing
     //setTimeout(() => {e.target.querySelector("#roomSubmit").disabled = false;}, 30000);
     const messages = document.querySelector("#chatDisplay");
@@ -144,13 +144,16 @@ const handleRoom = (e) => {
     const powerRand = powers[Math.floor(Math.random() * powerCap)]; //37
     const weaknessRand = weaknesses[Math.floor(Math.random() * weakCap)]; //20
 
-    if(numInRoom <= 2)
-    {
-        helper.sendPost(e.target.action, { characterRand, powerRand, weaknessRand });
-    }
+    const chatField = document.createElement('div');
+    document.querySelector("#textField").appendChild(chatField);
+
+    //if(numInRoom <= 2)
+    //{
+    //    helper.sendPost(e.target.action, { characterRand, powerRand, weaknessRand });
+    //}
 
     //This works but would be loaded after the decks are shown so I will comment it out for now
-    ReactDOM.render(<ChatBox/>, document.querySelector("#textField"));
+    ReactDOM.render(<ChatBox/>, chatField);
 
     //chatBoxListener();
 
@@ -238,36 +241,6 @@ const dataLoaded = (json) => {
     //console.log(weaknesses);
 }
 
-const loadDeckFromServer = async () =>
-{
-    //socket.emit('pull data', {num: 1});
-    if(numInRoom <= 2)
-    {
-        const response = await fetch('/getDeck');
-        const data = await response.json();
-        for(let i = 0; i < 2; i++)
-        {
-            if(i == 0)
-            {
-                ReactDOM.render(
-                    <DeckDisplay deck={data[i].deck} />,
-                    document.querySelector("#deck1")
-                );
-            }
-            else if(i == 1)
-            {
-                ReactDOM.render(
-                    <DeckDisplay deck={data[i].deck} />,
-                    document.querySelector("#deck2")
-                );
-            }
-        }
-        //ReactDOM.render(
-        //    <DeckDisplay deck={data.deck} />,
-        //    document.querySelector("#deck1")
-        //);
-    }
-}
 
 const EndScreen  = (props) =>
 {
@@ -275,6 +248,7 @@ const EndScreen  = (props) =>
         <div id="endText">
             <h1>{props.username} Won!</h1>
             <h3>This Room will close after 30 seconds</h3>
+            <h4>P.S: There is a bug that I didn't have time to fix so the game will only work if you join another room after this.</h4>
         </div>
     )
 }
@@ -284,8 +258,6 @@ const init = () => {
     let roomSelect = document.querySelector("#roomSelect");
     const profitSpot = document.querySelector("#profitSpot");
 
-    //loadDeckFromServer();
-    //chatBoxListener();
     ReactDOM.render(<LoginChatRoomWindow />, roomSelect);
     ReactDOM.render(<BuyButton/>, profitSpot);
     //currently just using to see a way I can access this
@@ -319,14 +291,19 @@ const init = () => {
     })
 
     socket.on('begin voting', (obj) => {
+        const deck1 = document.createElement('div');
+        const deck2 = document.createElement('div');
+        document.querySelector("#deck1").appendChild(deck1);
+        document.querySelector("#deck2").appendChild(deck2);
         ReactDOM.render(
             <DeckDisplay cardId="card1" username={obj.card1.username} character={obj.card1.character} power={obj.card1.power} weakness={obj.card1.weakness} />,
-                document.querySelector("#deck1")
+                deck1
         )
         ReactDOM.render(
             <DeckDisplay cardId="card2" username={obj.card2.username} character={obj.card2.character} power={obj.card2.power} weakness={obj.card2.weakness} />,
-            document.querySelector("#deck2")
+                deck2
         )
+        document.querySelector("#new-select").innerHTML = "";
         document.querySelector("#roomSelect").innerHTML = "";
         document.querySelector("#profitSpot").innerHTML = "";
     })
@@ -334,7 +311,8 @@ const init = () => {
     socket.on('all votes', (obj) => {
         document.querySelector("#chatDisplay").innerHTML = "";
         document.querySelector("#textField").innerHTML = "";
-        document.querySelector("#deckDisplay").innerHTML = "";
+        document.querySelector("#deck1").innerHTML = "";
+        document.querySelector("#deck2").innerHTML = "";
         ReactDOM.render(
             <EndScreen username={obj.username} cardId={obj.cardId}/>,
             document.querySelector("#endScreen")
@@ -344,9 +322,11 @@ const init = () => {
     socket.on('server-command', (obj) => {
         if(obj == "leave-room")
         {
+            document.querySelector("#endScreen").innerHTML = "";
             roomSelect.remove();
             roomSelect = document.createElement('div');
-            document.querySelector("#endScreen").appendChild(roomSelect)
+            roomSelect.setAttribute("id", "new-select");
+            document.querySelector("#headSection").appendChild(roomSelect)
             ReactDOM.render(<LoginChatRoomWindow />, roomSelect);
         }
     })
