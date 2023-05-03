@@ -1,6 +1,5 @@
 const handleError = (message) => {
     document.getElementById('errorMessage').textContent = message;
-    //document.getElementById('domoMessage').classList.remove('hidden');
   };
   
   /* Sends post requests to the server using fetch. Will look for various
@@ -16,7 +15,6 @@ const handleError = (message) => {
     });
   
     const result = await response.json();
-   // document.getElementById('domoMessage').classList.add('hidden');
   
     if(result.redirect) {
       window.location = result.redirect;
@@ -32,7 +30,7 @@ const handleError = (message) => {
   };
 
   const hideError = () => {
-    //document.querySelector("#domoMessage").classList.add('hidden');
+
   };
 
   module.exports = {
