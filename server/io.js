@@ -4,16 +4,19 @@ const { Server } = require('socket.io');
 let io;
 
 const roomData = {};
+const chatData = [];
 
 // put wrap
 const wrap = (middleware) => (socket, next) => middleware(socket.request, {}, next);
 
 // I don't think I'll have a use for channels
 const handleChatMessage = (msg, socket) => {
-  io.to([...socket.rooms][1]).emit('chat message', {
+  const data = {
     username: socket.request.session.account.username,
     message: msg.message,
-  });
+  }
+  chatData.push(data);
+  io.to([...socket.rooms][1]).emit('chat message', chatData);
 };
 
 const handleRoomChange = async (obj, socket) => {

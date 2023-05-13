@@ -1,3 +1,9 @@
+//To DO LIST
+//1. Make the messages auto scroll to the latest message - DONE
+//2. Make the messages persist on screen for those who are just joining the room
+//   a. Current method I'm working on is making an array of the messages in the io files and then emitting that
+//      instead of a single message
+//   b. Then looping through that in a for each of the object that will be sent through socket
 const helper = require('./helper.js');
 const React = require('react');
 const ReactDOM = require('react-dom');
@@ -41,7 +47,7 @@ const ChatBox = (props) =>
 {
     return (
         <form id="chatField" onSubmit={chatBoxListener}>
-            <textarea class="textarea is-large is-info" type="text" placeholder="My character would win because..." rows="5" cols="50" id="chatBox"></textarea>
+            <textarea class="textarea is-large is-info" type="text" placeholder="My character would win because..." rows="4" cols="50" id="chatBox"></textarea>
             <input type="submit" id="chatFieldSubmitButton" />
         </form>
     );
@@ -218,22 +224,38 @@ const init = () => {
     const messages = document.querySelector("#chatDisplay");
     let roomSelect = document.querySelector("#roomSelect");
     const profitSpot = document.querySelector("#profitSpot");
+    let endScreen = document.querySelector("#endScreen");
 
     ReactDOM.render(<LoginChatRoomWindow />, roomSelect);
     ReactDOM.render(<BuyButton/>, profitSpot);
     //currently just using to see a way I can access this
     getTextData("../assets/card-data/cardtext.json");
-    socket.on('chat message', (msg) => {
-        const newMessage = document.createElement('div');
-        messages.append(newMessage);
-        console.log(msg);
-        ReactDOM.render(<DisplayMessage username={msg.username} msg={msg.message} />, newMessage);
+    //ok from here I can put a foreach inside of socket.on 'chat message' for every obj in the array. Hopefully it won't be noticeable
+    socket.on('chat message', (data) => {
+        console.log(data);
+        messages.innerHTML = '';
+        data.forEach(msg => 
+            {
+                const newMessage = document.createElement('div');
+                messages.append(newMessage);
+                ReactDOM.render(<DisplayMessage username={msg.username} msg={msg.message} />, newMessage);
+            }
+        );
+        //const newMessage = document.createElement('div');
+        //messages.append(newMessage);
+        //console.log(data);
+        
+        //ReactDOM.render(<DisplayMessage username={msg.username} msg={msg.message} />, newMessage);
+        messages.scrollTop = messages.scrollHeight;
     })
     socket.on('deck select', (obj) => {
 
     })
 
     socket.on('begin voting', (obj) => {
+        //test later
+        document.querySelector("#deck1").innerHTML = "";
+        document.querySelector("#deck2").innerHTML = "";
         const deck1 = document.createElement('div');
         const deck2 = document.createElement('div');
         document.querySelector("#deck1").appendChild(deck1);
@@ -256,9 +278,14 @@ const init = () => {
         document.querySelector("#textField").innerHTML = "";
         document.querySelector("#deck1").innerHTML = "";
         document.querySelector("#deck2").innerHTML = "";
+        //new stuff
+        //endScreen.remove();
+        endScreen = document.createElement('div');
+        endsScreen.setAttribute("id", "new-select");
+        document.querySelector("#headSection").appendChild(endScreen);
         ReactDOM.render(
             <EndScreen username={obj.username} cardId={obj.cardId}/>,
-            document.querySelector("#endScreen")
+            endScreen
         )
     })
 
@@ -267,9 +294,10 @@ const init = () => {
         {
             document.querySelector("#endScreen").innerHTML = "";
             roomSelect.remove();
+            endScreen.remove();
             roomSelect = document.createElement('div');
             roomSelect.setAttribute("id", "new-select");
-            document.querySelector("#headSection").appendChild(roomSelect)
+            document.querySelector("#headSection").appendChild(roomSelect);
             ReactDOM.render(<LoginChatRoomWindow />, roomSelect);
         }
     })
