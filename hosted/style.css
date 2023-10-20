@@ -134,6 +134,8 @@ nav:nth-child(1) {
 #chatFieldSubmitButton
 {
     position: absolute;
+    justify-content: right;
+    border-radius: 2px;
     bottom: 0;
 }
 
